@@ -45,5 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
         // We don't need the button initially (we only need it once we start scanning.)
         stopScanningButton.setVisibility(View.INVISIBLE);
+
+        // https://developer.android.com/guide/topics/ui/declaring-layout#AdapterViews
+        deviceListView.setAdapter(listAdapter);
     }
 }
