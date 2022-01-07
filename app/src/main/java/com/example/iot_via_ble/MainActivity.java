@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     // ListViews in Android are backed by adapters, which hold the data being displayed in a ListView.
     ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 
-    ArrayList<BluetoothDevice> deviceList;
+    ArrayList<BluetoothDevice> deviceList = new ArrayList<>();
 
     private static final String TAG = "MyActivity";
 
@@ -37,5 +38,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        deviceListView = findViewById(R.id.deviceListView);
+        startScanningButton = findViewById(R.id.StartScanButton);
+        stopScanningButton = findViewById(R.id.StopScanButton);
+
+        // We don't need the button initially (we only need it once we start scanning.)
+        stopScanningButton.setVisibility(View.INVISIBLE);
     }
 }
