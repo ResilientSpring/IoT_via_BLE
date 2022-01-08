@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 bluetoothLeScanner.startScan(bleScanCallback);
             }
-        }).start();
+        }).start(); // [1][Note1]
     }
 
     public void stopScanning(View view) {
@@ -92,3 +92,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+// References:
+// 1. https://developer.android.com/guide/components/processes-and-threads
+// 2. https://developer.android.com/reference/android/os/AsyncTask
+
+// Notes:
+// 1. This class (Async) was deprecated in API level 30 because it would cause Context leaks,
+// missed callbacks, or crashes on configuration changes. It also has inconsistent behavior on
+// different versions of the platform, swallows exceptions from doInBackground,
+// and does not provide much utility over using Executors directly.[2]
