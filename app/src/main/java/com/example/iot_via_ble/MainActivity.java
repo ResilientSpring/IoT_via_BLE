@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -54,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
     public void startScanning(View view) {
         listAdapter.clear();
         deviceList.clear();
+        startScanningButton.setVisibility(View.INVISIBLE);
+        stopScanningButton.setVisibility(View.VISIBLE);
+
+        //
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                bluetoothLeScanner.startScan(bleScanCallback);
+            }
+        });
     }
 
     public void stopScanning(View view) {
