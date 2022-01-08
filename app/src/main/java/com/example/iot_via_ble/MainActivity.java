@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < listAdapter.getCount(); i++) {
             String addedDeviceDetail = listAdapter.getItem(i);
 
-            if (addedDeviceDetail.equals(device.getAddress())|| addedDeviceDetail.equals(device.getName()))
+            if (addedDeviceDetail.equals(device.getAddress()) || addedDeviceDetail.equals(device.getName()))
                 return true;
         }
 
