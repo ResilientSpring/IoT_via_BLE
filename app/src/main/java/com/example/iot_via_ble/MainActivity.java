@@ -68,5 +68,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopScanning(View view) {
+        stopScanningButton.setVisibility(View.INVISIBLE);
+        startScanningButton.setVisibility(View.VISIBLE);
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                bluetoothLeScanner.stopScan(bleScanCallback);
+            }
+        });
     }
 }
