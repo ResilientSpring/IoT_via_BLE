@@ -1,7 +1,5 @@
 package com.example.iot_via_ble;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -14,6 +12,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
@@ -86,10 +86,23 @@ public class MainActivity extends AppCompatActivity {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
 
-            if (result.getDevice() != null){
-
-            }
+            if (result.getDevice() != null)
+                if (!isDuplicate(result.getDevice()))
+                    synchronized (result.getDevice()) {
+                        String itemDetail = result.getDevice().getName() == null ? result.getDevice().getAddress() : result.getDevice().getName();
+                    }
         }
+    };
+
+    private boolean isDuplicate(BluetoothDevice device){
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            String addedDeviceDetail = listAdapter.getItem(i);
+
+            if (addedDeviceDetail.equals(device.getAddress())|| addedDeviceDetail.equals(device.getName()))
+                return true;
+        }
+
+        return false;
     }
 }
 
