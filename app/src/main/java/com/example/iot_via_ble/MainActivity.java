@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -58,13 +60,13 @@ public class MainActivity extends AppCompatActivity {
         startScanningButton.setVisibility(View.INVISIBLE);
         stopScanningButton.setVisibility(View.VISIBLE);
 
-        //
-        AsyncTask.execute(new Runnable() {
+        // Instruct the BluetoothLEScanner to start scanning.
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 bluetoothLeScanner.startScan(bleScanCallback);
             }
-        });
+        }).start();
     }
 
     public void stopScanning(View view) {
@@ -77,5 +79,16 @@ public class MainActivity extends AppCompatActivity {
                 bluetoothLeScanner.stopScan(bleScanCallback);
             }
         });
+    }
+
+    private ScanCallback bleScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            super.onScanResult(callbackType, result);
+
+            if (result.getDevice() != null){
+
+            }
+        }
     }
 }
