@@ -11,8 +11,8 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="40dp"
-        android:onClick="startScanning"
         android:text="Scan" />
+<!--    android:onClick="startScanning" -->
 
     <Button
         android:id="@+id/StopScanButton"
@@ -21,8 +21,8 @@
         android:layout_alignRight="@+id/StartScanButton"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="40dp"
-        android:onClick="stopScanning"
         android:text="Stop Scanning" />
+    <!-- android:onClick="stopScanning" -->
 
     <ListView
         android:id="@+id/deviceListView"
