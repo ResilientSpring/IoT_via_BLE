@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start(); // [1][Note1]
 
-/** Deprecated
+/** Deprecated and using the new substitute didn't lead to any result change.
+ *
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
