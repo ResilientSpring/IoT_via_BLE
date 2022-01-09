@@ -180,6 +180,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+
+//   Because startScanning() is also used by other functions and constructors void of argument view,
 //
 //
 //    public void startScanning(View view) {
