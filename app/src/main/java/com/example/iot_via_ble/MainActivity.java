@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         bluetoothManager  = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+
+        startScanningButton.setOnClickListener(startScan);
+        stopScanningButton.setOnClickListener(stopScan);
     }
 
     public void startScanning() {
@@ -140,6 +143,20 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    View.OnClickListener startScan = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startScanning();
+        }
+    };
+
+    View.OnClickListener stopScan = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            stopScanning();
+        }
+    };
+
     // Callback from Xiaomi night light
     protected BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
 
@@ -183,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 //   Because startScanning() is also used by other functions and constructors void of argument view,
-//
+//   use onClickListener instead.
 //
 //    public void startScanning(View view) {
 //    }
