@@ -192,6 +192,12 @@ public class MainActivity extends AppCompatActivity {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
 
+            // [3]
+            if (status == BluetoothGatt.GATT_SUCCESS)
+                broadcastUpdate("GATT Services Discovered");
+            else
+                Log.w(TAG, "onServicesDiscovered received: " + status);
+
             Log.i(TAG, "onServiceDiscovered()");
 
             // Get Xiaomi night light's services to a list
