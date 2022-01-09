@@ -5,12 +5,14 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,6 +22,7 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Scan result callback.
     private ScanCallback bleScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -101,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    // Avoid adding the same device to the lists of device and adapter.
     private boolean isDuplicate(BluetoothDevice device){
         for (int i = 0; i < listAdapter.getCount(); i++) {
             String addedDeviceDetail = listAdapter.getItem(i);
@@ -112,11 +117,14 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    // Define what would happen once the list items containing scan result is clicked.
     AdapterView.OnItemClickListener listClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             stopScanning();
             listAdapter.clear();
+
+            // Determine which of the list items is clicked.
             BluetoothDevice device = deviceList.get(position);
 
             // Connect to Xiaomi night light
@@ -126,9 +134,41 @@ public class MainActivity extends AppCompatActivity {
 
     // Callback from Xiaomi night light
     protected BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+
+        // When Services are discovered.
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+
+            Log.i(TAG, "onServiceDiscovered()");
+
+            // Get Xiaomi night light's services to a list
+            final List<BluetoothGattService> services = gatt.getServices();
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    // Iterate through available GATT services in order to get each service's
+                    // available characteristics.
+                    for (int i = 0; i < services.size(); i++) {
+                        BluetoothGattService service = services.get(i);
+                        Log.i(TAG, "onServicesDiscovered() :: " + service.getUuid().toString());
+
+                        // String Buffer is like a String, but mutable and thread-safe.
+                        // Get each service's UUID.
+                        StringBuffer buffer = new StringBuffer(services.get(i).getUuid().toString());
+
+                        // Get each service's available characteristics to a list.
+                        List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
+                        for (int j = 0; j < characteristics.size(); j++) {
+                            buffer.append("\n");
+                            buffer.append("Characteristic: ").append(characteristics.get(j).getUuid().toString());
+                        }
+                        listAdapter.add(buffer.toString());
+                    }
+                }
+            });
         }
     };
 }
