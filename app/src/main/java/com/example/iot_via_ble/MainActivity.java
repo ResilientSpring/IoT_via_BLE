@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     // ListViews in Android are backed by adapters, which hold the data being displayed in a ListView.
     // System services not available to Activities before onCreate().
-    ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+    ArrayAdapter<String> listAdapter; // = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 
     ArrayList<BluetoothDevice> deviceList = new ArrayList<>();
 
@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         // We don't need the button initially (we only need it once we start scanning.)
         stopScanningButton.setVisibility(View.INVISIBLE);
+
+        listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 
         // https://developer.android.com/guide/topics/ui/declaring-layout#AdapterViews
         deviceListView.setAdapter(listAdapter);
