@@ -2,6 +2,9 @@ package com.example.iot_via_ble;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -9,6 +12,7 @@ import android.bluetooth.le.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -52,9 +56,10 @@ public class MainActivity extends AppCompatActivity {
 
         // https://developer.android.com/guide/topics/ui/declaring-layout#AdapterViews
         deviceListView.setAdapter(listAdapter);
+        deviceListView.setOnItemClickListener(listClickListener);
     }
 
-    public void startScanning(View view) {
+    public void startScanning() {
         listAdapter.clear();
         deviceList.clear();
         startScanningButton.setVisibility(View.INVISIBLE);
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         }).start(); // [1][Note1]
     }
 
-    public void stopScanning(View view) {
+    public void stopScanning() {
         stopScanningButton.setVisibility(View.INVISIBLE);
         startScanningButton.setVisibility(View.VISIBLE);
 
@@ -106,6 +111,26 @@ public class MainActivity extends AppCompatActivity {
 
         return false;
     }
+
+    AdapterView.OnItemClickListener listClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            stopScanning();
+            listAdapter.clear();
+            BluetoothDevice device = deviceList.get(position);
+
+            // Connect to Xiaomi night light
+            device.connectGatt(MainActivity.this, true, gattCallback);
+        }
+    };
+
+    // Callback from Xiaomi night light
+    protected BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            super.onServicesDiscovered(gatt, status);
+        }
+    };
 }
 
 // References:
