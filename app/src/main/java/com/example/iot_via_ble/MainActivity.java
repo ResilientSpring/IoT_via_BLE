@@ -191,6 +191,8 @@ public class MainActivity extends AppCompatActivity {
                 // Attempt to discover services after successful connection.
                 Log.i(TAG, "Attempting to start service discovery: " + mBluetoothGatt.discoverServices());
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED){
+                Log.i(TAG, "onConnectionStateChange() - STATE_DISCONNECTED");
+
                 intentAction = "GATT Disconnected";
                 Log.i(TAG, "Disconnected from GATT server.");
                 broadcastUpdate(intentAction);
