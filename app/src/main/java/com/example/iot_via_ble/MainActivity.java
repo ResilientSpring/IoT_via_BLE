@@ -160,6 +160,12 @@ public class MainActivity extends AppCompatActivity {
     // Callback from Xiaomi night light
     protected BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
 
+        // When connection state has changed.
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            super.onConnectionStateChange(gatt, status, newState);
+        }
+
         // When Services are discovered.
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
