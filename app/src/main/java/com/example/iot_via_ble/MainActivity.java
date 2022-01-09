@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 if (!isDuplicate(result.getDevice()))
                     synchronized (result.getDevice()) {
                         String itemDetail = result.getDevice().getName() == null ? result.getDevice().getAddress() : result.getDevice().getName();
+                        listAdapter.add(itemDetail);
+                        deviceList.add(result.getDevice());
                     }
         }
     };
