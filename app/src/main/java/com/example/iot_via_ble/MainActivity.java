@@ -90,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
                 bluetoothLeScanner.startScan(bleScanCallback);
             }
         }).start(); // [1][Note1]
+/**
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                bluetoothLeScanner.startScan(bleScanCallback);
+            }
+        });
+ */
     }
 
     public void stopScanning() {
