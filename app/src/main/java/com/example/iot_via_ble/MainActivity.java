@@ -7,9 +7,11 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    BluetoothGatt mBluetoothGatt; // [3]
 
     // To control UI elements, we will need to access them in code.
     Button startScanningButton;
@@ -65,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         deviceListView.setAdapter(listAdapter);
         deviceListView.setOnItemClickListener(listClickListener);
 
-        bluetoothManager  = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
@@ -117,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     // Avoid adding the same device to the lists of device and adapter.
-    private boolean isDuplicate(BluetoothDevice device){
+    private boolean isDuplicate(BluetoothDevice device) {
         for (int i = 0; i < listAdapter.getCount(); i++) {
             String addedDeviceDetail = listAdapter.getItem(i);
 
@@ -164,6 +168,23 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
+
+            String intentAction;
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                Log.i(TAG, "onConnectionStateChange() - STATE_CONNECTED");
+                boolean discoverServiceOk = gatt.discoverServices();
+                intentAction = "GATT Connected";
+                broadcastUpdate(intentAction); // [3]
+
+                Log.i(TAG, "Connected to GATT server.");
+
+                // Attempt to discover services after successful connection.
+                Log.i(TAG, "Attempting to start service discovery: " + mBluetoothGatt.discoverServices());
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED){
+                intentAction = "GATT Disconnected";
+                Log.i(TAG, "Disconnected from GATT server.");
+                broadcastUpdate(intentAction);
+            }
         }
 
         // When Services are discovered.
@@ -203,7 +224,10 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
+    private void broadcastUpdate(final String action) {
+        final Intent intent = new Intent(action);
+        sendBroadcast(intent);
+    }
 
 //   Because startScanning() is also used by other functions and constructors void of argument view,
 //   use onClickListener instead.
@@ -215,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
 // References:
 // 1. https://developer.android.com/guide/components/processes-and-threads
 // 2. https://developer.android.com/reference/android/os/AsyncTask
+// 3. https://github.com/android/connectivity-samples/blob/a0e5b2c3907f1819026550ea5e09826bacfab46d/BluetoothLeGatt/Application/src/main/java/com/example/android/bluetoothlegatt/BluetoothLeService.java
 
 // Notes:
 // 1. This class (Async) was deprecated in API level 30 because it would cause Context leaks,
