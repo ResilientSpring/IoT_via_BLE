@@ -40,9 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MyActivity";
 
     // The in-code representation of the actual Bluetooth Manager present on the Android device.
-    BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-    BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
-    BluetoothLeScanner bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+    // System services not available to Activities before onCreate().
+    BluetoothManager bluetoothManager; // = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+    BluetoothAdapter bluetoothAdapter; // = bluetoothManager.getAdapter();
+    BluetoothLeScanner bluetoothLeScanner; // = bluetoothAdapter.getBluetoothLeScanner();
 
     private final static int REQUEST_ENABLE_BT = 1;
 
@@ -63,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
         // https://developer.android.com/guide/topics/ui/declaring-layout#AdapterViews
         deviceListView.setAdapter(listAdapter);
         deviceListView.setOnItemClickListener(listClickListener);
+
+        bluetoothManager  = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
+        bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
     }
 
     public void startScanning() {
