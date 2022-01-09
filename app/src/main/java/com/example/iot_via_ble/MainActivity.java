@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     ListView deviceListView;
 
     // ListViews in Android are backed by adapters, which hold the data being displayed in a ListView.
+    // System services not available to Activities before onCreate().
     ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 
     ArrayList<BluetoothDevice> deviceList = new ArrayList<>();
