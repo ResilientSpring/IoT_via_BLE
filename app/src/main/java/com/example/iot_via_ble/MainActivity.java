@@ -106,12 +106,21 @@ public class MainActivity extends AppCompatActivity {
         stopScanningButton.setVisibility(View.INVISIBLE);
         startScanningButton.setVisibility(View.VISIBLE);
 
+        /*
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 bluetoothLeScanner.stopScan(bleScanCallback);
             }
         });
+        */
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                bluetoothLeScanner.stopScan(bleScanCallback);
+            }
+        }).start();
     }
 
     // Scan result callback.
@@ -245,6 +254,12 @@ public class MainActivity extends AppCompatActivity {
     private void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);
+    }
+
+    private void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
+        final Intent intent = new Intent(action);
+
+
     }
 
 //   Because startScanning() is also used by other functions and constructors void of argument view,
