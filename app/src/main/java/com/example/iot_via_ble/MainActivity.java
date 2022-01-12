@@ -256,6 +256,12 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
+    private void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
+        final Intent intent = new Intent(action);
+
+
+    }
+
 //   Because startScanning() is also used by other functions and constructors void of argument view,
 //   use onClickListener instead.
 //
