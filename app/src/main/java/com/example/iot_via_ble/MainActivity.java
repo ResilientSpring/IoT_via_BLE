@@ -1,5 +1,6 @@
 package com.example.iot_via_ble;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -12,7 +13,9 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,8 +23,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
     BluetoothAdapter bluetoothAdapter; // = bluetoothManager.getAdapter();
     BluetoothLeScanner bluetoothLeScanner; // = bluetoothAdapter.getBluetoothLeScanner();
 
-    private final static int REQUEST_ENABLE_BT = 1;
+    private final static int REQUEST_ENABLE_BT = 0;
+    private static final int REQUEST_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
         startScanningButton.setOnClickListener(startScan);
         stopScanningButton.setOnClickListener(stopScan);
+
+        ensureLocationPermissionIsEnabled();
     }
 
     public void startScanning() {
@@ -188,12 +198,12 @@ public class MainActivity extends AppCompatActivity {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
 
-            String intentAction;
+//            String intentAction;
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(TAG, "onConnectionStateChange() - STATE_CONNECTED");
                 boolean discoverServiceOk = gatt.discoverServices();
-                intentAction = "GATT Connected";
-                broadcastUpdate(intentAction); // [3]
+//                intentAction = "GATT Connected";
+//                broadcastUpdate(intentAction); // [3]
 
                 Log.i(TAG, "Connected to GATT server.");
 
@@ -202,9 +212,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED){
                 Log.i(TAG, "onConnectionStateChange() - STATE_DISCONNECTED");
 
-                intentAction = "GATT Disconnected";
+//                intentAction = "GATT Disconnected";
                 Log.i(TAG, "Disconnected from GATT server.");
-                broadcastUpdate(intentAction);
+//                broadcastUpdate(intentAction);
             }
         }
 
@@ -212,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
-
+/*
             // [3]
             if (status == BluetoothGatt.GATT_SUCCESS)
                 broadcastUpdate("GATT Services Discovered");
@@ -220,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
 
             Log.i(TAG, "onServiceDiscovered()");
+
+ */
 
             // Get Xiaomi night light's services to a list
             final List<BluetoothGattService> services = gatt.getServices();
@@ -250,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     };
-
+/*
     private void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);
@@ -262,11 +274,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+ */
+
 //   Because startScanning() is also used by other functions and constructors void of argument view,
 //   use onClickListener instead.
 //
 //    public void startScanning(View view) {
 //    }
+
+    // Starting API Level 23, there is a runtime permission model allowing the apps to request user
+    // permissions in Android at runtime.
+    private void ensureLocationPermissionIsEnabled(){
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+
+            return;
+        }
+
+//        startScanning();
+    }
+
+    // Handle the context that the user declines to grant the permission.
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode){
+            case REQUEST_LOCATION:{
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    Log.i(TAG, "Permission Granted");
+                else{
+                    Toast.makeText(getApplicationContext(), "Location Not granted", Toast.LENGTH_LONG).show();
+
+                    // Close the app.
+                    finish();
+                }
+                break;
+            }
+            default:
+        }
+    }
 }
 
 // References:
