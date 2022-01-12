@@ -23,7 +23,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -292,6 +294,26 @@ public class MainActivity extends AppCompatActivity {
 //        startScanning();
     }
 
+    // Handle the context that the user declines to grant the permission.
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode){
+            case REQUEST_LOCATION:{
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    Log.i(TAG, "Permission Granted");
+                else{
+                    Toast.makeText(getApplicationContext(), "Location Not granted", Toast.LENGTH_LONG).show();
+
+                    // Close the app.
+                    finish();
+                }
+                break;
+            }
+            default:
+        }
+    }
 }
 
 // References:
