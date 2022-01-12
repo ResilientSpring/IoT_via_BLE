@@ -188,12 +188,12 @@ public class MainActivity extends AppCompatActivity {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
 
-            String intentAction;
+//            String intentAction;
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(TAG, "onConnectionStateChange() - STATE_CONNECTED");
                 boolean discoverServiceOk = gatt.discoverServices();
-                intentAction = "GATT Connected";
-                broadcastUpdate(intentAction); // [3]
+//                intentAction = "GATT Connected";
+//                broadcastUpdate(intentAction); // [3]
 
                 Log.i(TAG, "Connected to GATT server.");
 
@@ -202,9 +202,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED){
                 Log.i(TAG, "onConnectionStateChange() - STATE_DISCONNECTED");
 
-                intentAction = "GATT Disconnected";
+//                intentAction = "GATT Disconnected";
                 Log.i(TAG, "Disconnected from GATT server.");
-                broadcastUpdate(intentAction);
+//                broadcastUpdate(intentAction);
             }
         }
 
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
-
+/*
             // [3]
             if (status == BluetoothGatt.GATT_SUCCESS)
                 broadcastUpdate("GATT Services Discovered");
@@ -220,6 +220,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
 
             Log.i(TAG, "onServiceDiscovered()");
+
+ */
 
             // Get Xiaomi night light's services to a list
             final List<BluetoothGattService> services = gatt.getServices();
@@ -250,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     };
-
+/*
     private void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);
@@ -261,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+ */
 
 //   Because startScanning() is also used by other functions and constructors void of argument view,
 //   use onClickListener instead.
