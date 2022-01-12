@@ -1,5 +1,6 @@
 package com.example.iot_via_ble;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -12,7 +13,9 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +25,8 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
     BluetoothAdapter bluetoothAdapter; // = bluetoothManager.getAdapter();
     BluetoothLeScanner bluetoothLeScanner; // = bluetoothAdapter.getBluetoothLeScanner();
 
-    private final static int REQUEST_ENABLE_BT = 1;
+    private final static int REQUEST_ENABLE_BT = 0;
+    private static final int REQUEST_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
         startScanningButton.setOnClickListener(startScan);
         stopScanningButton.setOnClickListener(stopScan);
+
+        ensureLocationPermissionIsEnabled();
     }
 
     public void startScanning() {
@@ -271,6 +279,19 @@ public class MainActivity extends AppCompatActivity {
 //
 //    public void startScanning(View view) {
 //    }
+
+    // Starting API Level 23, there is a runtime permission model allowing the apps to request user
+    // permissions in Android at runtime.
+    private void ensureLocationPermissionIsEnabled(){
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+
+            return;
+        }
+
+//        startScanning();
+    }
+
 }
 
 // References:
